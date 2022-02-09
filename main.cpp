@@ -1,14 +1,15 @@
 #include <iostream>
 #include <string>
-
-using namespace std;
-
-class RegularExpressin {
-    string value;
-};
+#include "RegularExpression.h"
 
 int main() {
-    string in_string;
-    cin >> in_string;
+    RegularExpression expression;
+    std::string input;
+    std::cin >> input;
 
+    expression.set_expression(input);
+
+    std::cout << expression.get_expression();
+
+    return 0;
 }
