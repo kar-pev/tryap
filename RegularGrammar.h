@@ -4,23 +4,28 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <utility>
 
 
 class RegularGrammar {
     public:
 
+        RegularGrammar();
+
+        std::pair <char, std::string> get_rule(int a, int b);
+
     private:
         // Not terminals
-        static std::vector <char> N;
+        const std::vector <char> N {'S', 'Q', 'V'};
 
         // Terminals
-        static std::vector <char> T;
+        const std::vector <char> T {'a', 'b'};
 
         //Rules
-        std::map <std::string, std::string> P;
+        static std::map <char, std::vector <std::string> >P;
 
         //Start terminal
-        static char S;
+        const char S = 'S';
 };
 
 
