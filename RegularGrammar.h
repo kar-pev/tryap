@@ -22,7 +22,7 @@ class RegularGrammar {
         const std::vector <char> T {'a', 'b'};
 
         //Rules
-        static std::map <char, std::vector <std::string> >P;
+        std::map <char, std::vector <std::string> >P;
 
         //Start terminal
         const char S = 'S';
