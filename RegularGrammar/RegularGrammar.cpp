@@ -5,9 +5,16 @@
 
 RegularGrammar::RegularGrammar() {
 
+    RegularGrammar::N = {'S', 'Q', 'V'};
+
+    RegularGrammar::T = {'a', 'b'};
+
+    RegularGrammar::S = 'S';
+
     RegularGrammar::P = {{'S', std::vector <std::string> {"~Q", "(~V)V", "e"}},
                          {'Q', std::vector <std::string> {"V", "|S"}},
                          {'V', std::vector <std::string> {"*S", "S", "|S"}}};
+
 
 }
 

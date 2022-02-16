@@ -1,21 +1,27 @@
 #include <iostream>
 #include <string>
-#include "RegularExpression.h"
-#include "RegularGrammar.h"
+#include "Grammar/Grammar.h"
 
 int main() {
-    RegularExpression expression;
-    RegularGrammar grammar;
     std::string input;
     std::cin >> input;
 
-    expression.set_expression(input);
+    bool check;
+    Grammar grammar;
 
-/*
-    std::cout << expression.get_expression();
-*/
+    grammar.add_T('a');
+    grammar.add_T('b');
+    grammar.add_N('S');
 
-    grammar.get_rule(1, 1);
+
+
+    check = grammar.add_Rule("S", "abS");
+
+    if (check) {
+        std::cout << "Rule added successfully" << std::endl;
+    } else {
+        std::cout << "Task failed" << std::endl;
+    }
 
     return 0;
 }

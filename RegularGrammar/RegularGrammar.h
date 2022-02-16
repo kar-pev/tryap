@@ -5,9 +5,10 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include "../Grammar/Grammar.h"
 
 
-class RegularGrammar {
+class RegularGrammar : Grammar{
     public:
 
         RegularGrammar();
@@ -15,17 +16,10 @@ class RegularGrammar {
         std::pair <char, std::string> get_rule(int a, int b);
 
     private:
-        // Not terminals
-        const std::vector <char> N {'S', 'Q', 'V'};
-
-        // Terminals
-        const std::vector <char> T {'a', 'b'};
 
         //Rules
         std::map <char, std::vector <std::string> >P;
 
-        //Start terminal
-        const char S = 'S';
 };
 
 
