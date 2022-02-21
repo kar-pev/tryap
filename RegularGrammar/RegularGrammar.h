@@ -5,20 +5,15 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "../Grammar/Grammar.h"
+#include "../ContextFreeGrammar/ContextFreeGrammar.h"
 
 
-class RegularGrammar : Grammar{
+class RegularGrammar : protected ContextFreeGrammar{
     public:
 
         RegularGrammar();
 
         std::pair <char, std::string> get_rule(int a, int b);
-
-    private:
-
-        //Rules
-        std::map <char, std::vector <std::string> >P;
 
 };
 
