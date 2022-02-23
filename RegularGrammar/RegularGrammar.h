@@ -8,7 +8,7 @@
 #include "../ContextFreeGrammar/ContextFreeGrammar.h"
 
 
-class RegularGrammar : protected ContextFreeGrammar{
+class RegularGrammar : public ContextFreeGrammar{
     public:
 
         RegularGrammar();

@@ -1,7 +1,7 @@
 #ifndef TRYAP_GRAMMAR_H
 #define TRYAP_GRAMMAR_H
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 class Grammar {
 
@@ -28,10 +28,10 @@ class Grammar {
         std::vector <char> N;
 
         // Terminals
-        std::vector <char> T;
+        std::vector <char> T = std::vector <char> (1, 'e');
 
         //Rules
-        std::map <std::string, std::vector <std::string> > P;
+        std::unordered_map <std::string, std::vector <std::string> > P;
 
         //Start terminal
         char S;

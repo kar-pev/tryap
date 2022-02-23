@@ -4,13 +4,14 @@
 #include "../Grammar/Grammar.h"
 
 
-class ContextFreeGrammar : protected Grammar {
+class ContextFreeGrammar : public Grammar {
 
-    bool add_Rule(char n, std::string);
+public:
+    virtual bool add_Rule(char n, std::string rule);
 
-    protected:
+protected:
         //Rules
-        std::map <char, std::vector <std::string> >P;
+        std::unordered_map <char, std::vector <std::string> > P;
 };
 
 
