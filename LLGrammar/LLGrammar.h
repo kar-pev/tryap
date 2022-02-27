@@ -13,7 +13,15 @@ class LLGrammar : public ContextFreeGrammar{
 
         LLGrammar();
 
-        std::unordered_map < char /*literal*/, std::unordered_set<char> /*first for literal*/ > build_first();
+        void build_first();
+
+        void build_follow();
+
+        bool rule_category(std::string rule);
+
+        bool string_first(char B, std::string part, int mode, char A);
+
+        bool follow_update(char A, std::string rule);
 
     private:
 
@@ -22,6 +30,8 @@ class LLGrammar : public ContextFreeGrammar{
         std::unordered_map < char, std::unordered_set<char> > follow;
 
         std::unordered_map < char, std::unordered_set<char> > LLanalisator;
+
+        bool first_exists = false;
 
 };
 
