@@ -7,7 +7,7 @@ RegularGrammar::RegularGrammar() {
 
     RegularGrammar::N = {'S', 'Q', 'V'};
 
-    RegularGrammar::T = {'a', 'b'};
+    RegularGrammar::T = {'~', '*', '|', '(', ')'};
 
     RegularGrammar::S = 'S';
 

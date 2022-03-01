@@ -5,10 +5,11 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "../ContextFreeGrammar/ContextFreeGrammar.h"
+#include "../LLGrammar/LLGrammar.h"
 
 
-class RegularGrammar : public ContextFreeGrammar{
+
+class RegularGrammar : public LLGrammar{
     public:
 
         RegularGrammar();

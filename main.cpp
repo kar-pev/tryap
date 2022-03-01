@@ -7,7 +7,7 @@
 
 int main() {
 
-    LLGrammar llGrammar;
+/*    LLGrammar llGrammar;
 
     llGrammar.add_N('A');
 
@@ -29,9 +29,15 @@ int main() {
 
     llGrammar.add_Rule('C', "e");
 
-    llGrammar.add_Rule('B', "A");
+    llGrammar.add_Rule('B', "A");*/
 
-    llGrammar.build_follow();
+    RegularGrammar regularGrammar;
+
+    bool check;
+
+    check = regularGrammar.build_analyzer();
+
+    if (!check) std::cout << "error";
 
     return 0;
 }

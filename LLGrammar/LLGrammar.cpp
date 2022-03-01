@@ -6,14 +6,14 @@ LLGrammar::LLGrammar() = default;
 
 void LLGrammar::build_first() {
     std::cout << "start" << std::endl;
-    for (char n : LLGrammar::N) {
-        LLGrammar::first[n] = std::unordered_set <char> ();
+    for (char n: LLGrammar::N) {
+        LLGrammar::first[n] = std::unordered_set<char>();
         if (std::find(LLGrammar::P[n].begin(), LLGrammar::P[n].end(), "e") != LLGrammar::P[n].end()) {
             LLGrammar::first[n].insert('e');
         }
     }
 
-    for (char t : LLGrammar::T) {
+    for (char t: LLGrammar::T) {
         LLGrammar::first[t] = {t};
     }
 
@@ -25,11 +25,11 @@ void LLGrammar::build_first() {
 
         Checker = false;
 
-        for (auto rule : LLGrammar::P) {
-            for (auto result : rule.second) {
-                for (auto symbol : result) {
+        for (auto rule: LLGrammar::P) {
+            for (auto result: rule.second) {
+                for (auto symbol: result) {
 
-                    for (auto val : LLGrammar::first[symbol]) {
+                    for (auto val: LLGrammar::first[symbol]) {
 
                         set_size = LLGrammar::first[rule.first].size();
 
@@ -40,7 +40,8 @@ void LLGrammar::build_first() {
                         }
                     }
 
-                    if (std::find(LLGrammar::first[symbol].begin(), LLGrammar::first[symbol].end(), 'e') == LLGrammar::first[symbol].end()) {
+                    if (std::find(LLGrammar::first[symbol].begin(), LLGrammar::first[symbol].end(), 'e') ==
+                        LLGrammar::first[symbol].end()) {
 
                         break;
 
@@ -51,12 +52,12 @@ void LLGrammar::build_first() {
 
 
         //iteration output
-        for (auto it : LLGrammar::first) {
+        for (auto it: LLGrammar::first) {
             std::cout << it.first << " : ";
             if (std::empty(it.second)) {
                 std::cout << "empty";
             }
-            for (auto item : it.second) {
+            for (auto item: it.second) {
                 std::cout << item << ' ';
             }
             std::cout << std::endl;
@@ -80,15 +81,15 @@ void LLGrammar::build_follow() {
 
     }
 
-    for (char n : LLGrammar::N) {
-        LLGrammar::follow[n] = std::unordered_set <char> ();
+    for (char n: LLGrammar::N) {
+        LLGrammar::follow[n] = std::unordered_set<char>();
     }
 
     LLGrammar::follow[LLGrammar::S].insert('$');
 
-    for (auto term : LLGrammar::P) {
+    for (auto term: LLGrammar::P) {
 
-        for (auto rule : term.second) {
+        for (auto rule: term.second) {
 
             LLGrammar::rule_category(rule);
 
@@ -97,12 +98,12 @@ void LLGrammar::build_follow() {
     }
 
     //checking output----------------------------------------
-    for (auto it : LLGrammar::follow) {
+    for (auto it: LLGrammar::follow) {
         std::cout << it.first << " : ";
         if (std::empty(it.second)) {
             std::cout << "empty";
         }
-        for (auto item : it.second) {
+        for (auto item: it.second) {
             std::cout << item << ' ';
         }
         std::cout << std::endl;
@@ -112,17 +113,17 @@ void LLGrammar::build_follow() {
 
     //-------------------------------------
 
-    bool checker  = true;
+    bool checker = true;
 
     while (checker) {
 
         checker = false;
 
-        for (auto term : LLGrammar::P) {
+        for (auto term: LLGrammar::P) {
 
-            for (auto rule : term.second) {
+            for (auto rule: term.second) {
 
-                if(LLGrammar::follow_update(term.first, rule)) {
+                if (LLGrammar::follow_update(term.first, rule)) {
 
                     checker = true;
 
@@ -133,12 +134,12 @@ void LLGrammar::build_follow() {
         }
 
         //------------------------------------
-        for (auto it : LLGrammar::follow) {
+        for (auto it: LLGrammar::follow) {
             std::cout << it.first << " : ";
             if (std::empty(it.second)) {
                 std::cout << "empty";
             }
-            for (auto item : it.second) {
+            for (auto item: it.second) {
                 std::cout << item << ' ';
             }
             std::cout << std::endl;
@@ -149,6 +150,8 @@ void LLGrammar::build_follow() {
         //-------------------------------------
 
     }
+
+    LLGrammar::follow_exists = true;
 
 }
 
@@ -188,17 +191,16 @@ bool LLGrammar::string_first(char B, std::string part, int mode, char A) {
 
     bool added = false;
 
-    for ( char i : part ) {
+    for (char i: part) {
 
-        for ( char elem : LLGrammar::first[i] ) {
+        for (char elem: LLGrammar::first[i]) {
 
             if (elem != 'e' && mode == 0) {
 
-                if (std::find(LLGrammar::follow[B].begin(), LLGrammar::follow[B].end(), elem) == LLGrammar::follow[B].end()) {
+                if (std::find(LLGrammar::follow[B].begin(), LLGrammar::follow[B].end(), elem) ==
+                    LLGrammar::follow[B].end()) {
 
                     LLGrammar::follow[B].insert(elem);
-
-                    checker = true;
 
                     added = true;
 
@@ -210,9 +212,10 @@ bool LLGrammar::string_first(char B, std::string part, int mode, char A) {
 
             } else if (mode == 1 && elem == 'e') {
 
-                for ( auto item : LLGrammar::follow[A]) {
+                for (auto item: LLGrammar::follow[A]) {
 
-                    if (std::find(LLGrammar::follow[B].begin(), LLGrammar::follow[B].end(), item) == LLGrammar::follow[B].end()) {
+                    if (std::find(LLGrammar::follow[B].begin(), LLGrammar::follow[B].end(), item) ==
+                        LLGrammar::follow[B].end()) {
 
                         LLGrammar::follow[B].insert(item);
 
@@ -243,7 +246,7 @@ bool LLGrammar::string_first(char B, std::string part, int mode, char A) {
 }
 
 
-bool LLGrammar::follow_update( char A, std::string rule) {
+bool LLGrammar::follow_update(char A, std::string rule) {
 
     int rule_length = rule.size();
 
@@ -263,9 +266,10 @@ bool LLGrammar::follow_update( char A, std::string rule) {
 
             } else {
 
-                for ( auto item : LLGrammar::follow[A]) {
+                for (auto item: LLGrammar::follow[A]) {
 
-                    if (std::find(LLGrammar::follow[rule[i]].begin(), LLGrammar::follow[rule[i]].end(), item) == LLGrammar::follow[rule[i]].end()) {
+                    if (std::find(LLGrammar::follow[rule[i]].begin(), LLGrammar::follow[rule[i]].end(), item) ==
+                        LLGrammar::follow[rule[i]].end()) {
 
                         LLGrammar::follow[rule[i]].insert(item);
 
@@ -282,6 +286,112 @@ bool LLGrammar::follow_update( char A, std::string rule) {
     }
 
     return added;
+
+}
+
+bool LLGrammar::build_analyzer() {
+
+    if (!LLGrammar::follow_exists) {
+
+        LLGrammar::build_follow();
+
+    }
+
+    for (auto noterm: LLGrammar::N) {
+
+        for (auto term: LLGrammar::T) {
+
+            LLGrammar::LLanalyzer[noterm][term] = -1;
+
+        }
+
+        LLGrammar::LLanalyzer[noterm]['$'] = -1;
+
+    }
+
+    int counter = 1;
+
+    for ( auto rule : LLGrammar::P ) {
+
+        for ( auto result : rule.second ) {
+
+            for ( auto lit : result ) {
+
+                for ( auto item : LLGrammar::first[lit]) {
+
+                    if (item != 'e') {
+
+                        std::cout << "from first : " << rule.first << ' ' << item << ' ' <<LLGrammar::LLanalyzer[rule.first][item] << '\n';
+
+                        if (LLGrammar::LLanalyzer[rule.first][item] == -1) {
+                            LLGrammar::LLanalyzer[rule.first][item] = counter;
+                        } else {
+                            return false;
+                        }
+
+                    } else {
+
+                        for ( auto elem : LLGrammar::follow[lit]) {
+
+                            std::cout << "from follow : "<< rule.first << ' ' << elem << ' ' <<LLGrammar::LLanalyzer[rule.first][elem] << '\n';
+
+
+                            if (LLGrammar::LLanalyzer[rule.first][elem] == -1) {
+                                LLGrammar::LLanalyzer[rule.first][elem] = counter;
+                            } else {
+                                return false;
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                if (std::find(LLGrammar::first[lit].begin(), LLGrammar::first[lit].end(), 'e') == LLGrammar::first[lit].end()) {
+
+                    break;
+
+                }
+
+                
+
+            }
+
+            counter++;
+
+            std::cout << '\n' << counter << '\n';
+
+        }
+
+    }
+
+    for (auto n : LLGrammar::LLanalyzer) {
+
+        std::cout << "  " << '\n';
+
+        for (auto t : n.second) {
+
+            std::cout << t.first << ' ' << '\n';
+
+        }
+
+        break;
+
+    }
+
+    for (auto n : LLGrammar::LLanalyzer) {
+
+        for (auto t : n.second) {
+
+            std::cout << n.first << ' ' << t.second << '\n';
+
+        }
+
+    }
+
+    return true;
+
 
 }
 

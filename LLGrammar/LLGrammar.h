@@ -17,6 +17,8 @@ class LLGrammar : public ContextFreeGrammar{
 
         void build_follow();
 
+        bool build_analyzer();
+
         bool rule_category(std::string rule);
 
         bool string_first(char B, std::string part, int mode, char A);
@@ -29,9 +31,11 @@ class LLGrammar : public ContextFreeGrammar{
 
         std::unordered_map < char, std::unordered_set<char> > follow;
 
-        std::unordered_map < char, std::unordered_set<char> > LLanalisator;
+        std::unordered_map < char, std::unordered_map<char, int > > LLanalyzer;
 
         bool first_exists = false;
+
+        bool follow_exists = false;
 
 };
 
