@@ -499,6 +499,8 @@ bool LLGrammar::build_tree( std::string input ) {
 
     }
 
+    std::cout << '\n' << "deduction : ";
+
     for (auto item : result) {
         std::cout << item << ' ';
     }

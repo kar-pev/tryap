@@ -39,7 +39,7 @@ int main() {
 
     if (!check) std::cout << "error";
 
-    regularGrammar.build_tree("~|~");
+    regularGrammar.build_tree("~|(~~)*");
 
     return 0;
 }
