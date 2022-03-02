@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <stack>
 
 
 class LLGrammar : public ContextFreeGrammar{
@@ -19,6 +20,8 @@ class LLGrammar : public ContextFreeGrammar{
 
         bool build_analyzer();
 
+        bool build_tree( std::string input );
+
         bool rule_category(std::string rule);
 
         bool string_first(char B, std::string part, int mode, char A);
@@ -31,7 +34,7 @@ class LLGrammar : public ContextFreeGrammar{
 
         std::unordered_map < char, std::unordered_set<char> > follow;
 
-        std::unordered_map < char, std::unordered_map<char, int > > LLanalyzer;
+        std::unordered_map < char, std::unordered_map<char, std::pair <int, int> > > LLanalyzer;
 
         bool first_exists = false;
 

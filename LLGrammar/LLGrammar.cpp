@@ -17,6 +17,8 @@ void LLGrammar::build_first() {
         LLGrammar::first[t] = {t};
     }
 
+    LLGrammar::first['e'] = {'e'};
+
     bool Checker = true;
 
     int set_size;
@@ -301,19 +303,23 @@ bool LLGrammar::build_analyzer() {
 
         for (auto term: LLGrammar::T) {
 
-            LLGrammar::LLanalyzer[noterm][term] = 0;
+            LLGrammar::LLanalyzer[noterm][term].first = 0;
 
         }
 
-        LLGrammar::LLanalyzer[noterm]['$'] = 0;
+        LLGrammar::LLanalyzer[noterm]['$'].first = 0;
 
     }
 
     int counter = 1;
 
+    int rule_number = 0;
+
     for ( auto rule : LLGrammar::P ) {
 
         for ( auto result : rule.second ) {
+
+            std::cout << '\n' << counter << '\n';
 
             for ( auto lit : result ) {
 
@@ -321,23 +327,25 @@ bool LLGrammar::build_analyzer() {
 
                     if (item != 'e') {
 
-                        std::cout << "from first : " << rule.first << ' ' << item << ' ' <<LLGrammar::LLanalyzer[rule.first][item] << '\n';
+                        std::cout << "from first : " << rule.first << ' ' << item << ' ' << LLGrammar::LLanalyzer[rule.first][item].first << '\n';
 
-                        if (LLGrammar::LLanalyzer[rule.first][item] == 0) {
-                            LLGrammar::LLanalyzer[rule.first][item] = counter;
+                        if (LLGrammar::LLanalyzer[rule.first][item].first == 0) {
+                            LLGrammar::LLanalyzer[rule.first][item].first = counter;
+                            LLGrammar::LLanalyzer[rule.first][item].second = rule_number;
                         } else {
                             return false;
                         }
 
                     } else {
 
-                        for ( auto elem : LLGrammar::follow[lit]) {
+                        for ( auto elem : LLGrammar::follow[rule.first]) {
 
-                            std::cout << "from follow : "<< rule.first << ' ' << elem << ' ' <<LLGrammar::LLanalyzer[rule.first][elem] << '\n';
+                            std::cout << "from follow : "<< rule.first << ' ' << elem << ' ' << LLGrammar::LLanalyzer[rule.first][elem].first << '\n';
 
 
-                            if (LLGrammar::LLanalyzer[rule.first][elem] == 0) {
-                                LLGrammar::LLanalyzer[rule.first][elem] = counter;
+                            if (LLGrammar::LLanalyzer[rule.first][elem].first == 0) {
+                                LLGrammar::LLanalyzer[rule.first][elem].first = counter;
+                                LLGrammar::LLanalyzer[rule.first][elem].second = rule_number;
                             } else {
                                 return false;
                             }
@@ -360,7 +368,23 @@ bool LLGrammar::build_analyzer() {
 
             counter++;
 
-            std::cout << '\n' << counter << '\n';
+            rule_number++;
+
+        }
+
+        rule_number = 0;
+
+    }
+
+    int cnt = 1;
+
+    for (auto item : LLGrammar::P) {
+
+        for (auto rule : item.second) {
+
+            std::cout << cnt << " : " << item.first << " -> " << rule << '\n';
+
+            cnt++;
 
         }
 
@@ -388,7 +412,7 @@ bool LLGrammar::build_analyzer() {
 
         for (auto t : n.second) {
 
-            std::cout << ' ' << t.second;
+            std::cout << ' ' << t.second.first;
 
         }
 
@@ -398,6 +422,88 @@ bool LLGrammar::build_analyzer() {
 
     return true;
 
+}
+
+bool LLGrammar::build_tree( std::string input ) {
+
+    input += '$';
+
+    std::stack < char > cur_stack;
+
+    cur_stack.push('$'); cur_stack.push(LLGrammar::S);
+
+    std::vector <int> result;
+
+    char first_elem;
+
+    std::string::iterator ptr = input.begin();
+
+    while (ptr != input.end()) {
+
+        first_elem = cur_stack.top();
+
+        std::cout << *ptr << '\n';
+
+        std::cout << first_elem << '\n';
+
+        for (auto item : result) {
+            std::cout << item << ' ';
+        }
+
+        std::cout << std::endl;
+
+        if (first_elem == '$' && *ptr != '$') {
+            std::cout << first_elem << ' ' << *ptr << "this is not regular expression" << '\n';
+            return false;
+        }
+
+        std::pair <int, int> needed_rule;
+
+        try {
+
+            needed_rule = LLGrammar::LLanalyzer[first_elem].at(*ptr);
+
+
+            if (needed_rule.first == 0) {
+                std::cout << "this is not regular expression, no rule" << '\n';
+                return false;
+            }
+
+            result.push_back(needed_rule.first);
+
+            cur_stack.pop();
+
+            for ( auto it = LLGrammar::P[first_elem][needed_rule.second].end() - 1; it != LLGrammar::P[first_elem][needed_rule.second].begin() - 1; it--) {
+                cur_stack.push(*it);
+            }
+
+            //I'll change this later. Rules shouldn't have ~
+            while (ptr != input.end()) {
+
+                if (cur_stack.top() == *ptr) {
+                    ptr++;
+                    cur_stack.pop();
+                } else if (cur_stack.top() == 'e') {
+                    cur_stack.pop();
+                } else {
+                    break;
+                }
+
+            }
+
+
+        } catch(std::out_of_range){
+            std::cout << "this is not regular expression, fail" << '\n';
+            return false;
+        }
+
+    }
+
+    for (auto item : result) {
+        std::cout << item << ' ';
+    }
+
+    return true;
 
 }
 
