@@ -301,11 +301,11 @@ bool LLGrammar::build_analyzer() {
 
         for (auto term: LLGrammar::T) {
 
-            LLGrammar::LLanalyzer[noterm][term] = -1;
+            LLGrammar::LLanalyzer[noterm][term] = 0;
 
         }
 
-        LLGrammar::LLanalyzer[noterm]['$'] = -1;
+        LLGrammar::LLanalyzer[noterm]['$'] = 0;
 
     }
 
@@ -323,7 +323,7 @@ bool LLGrammar::build_analyzer() {
 
                         std::cout << "from first : " << rule.first << ' ' << item << ' ' <<LLGrammar::LLanalyzer[rule.first][item] << '\n';
 
-                        if (LLGrammar::LLanalyzer[rule.first][item] == -1) {
+                        if (LLGrammar::LLanalyzer[rule.first][item] == 0) {
                             LLGrammar::LLanalyzer[rule.first][item] = counter;
                         } else {
                             return false;
@@ -336,7 +336,7 @@ bool LLGrammar::build_analyzer() {
                             std::cout << "from follow : "<< rule.first << ' ' << elem << ' ' <<LLGrammar::LLanalyzer[rule.first][elem] << '\n';
 
 
-                            if (LLGrammar::LLanalyzer[rule.first][elem] == -1) {
+                            if (LLGrammar::LLanalyzer[rule.first][elem] == 0) {
                                 LLGrammar::LLanalyzer[rule.first][elem] = counter;
                             } else {
                                 return false;
@@ -368,13 +368,15 @@ bool LLGrammar::build_analyzer() {
 
     for (auto n : LLGrammar::LLanalyzer) {
 
-        std::cout << "  " << '\n';
+        std::cout << "  ";
 
         for (auto t : n.second) {
 
-            std::cout << t.first << ' ' << '\n';
+            std::cout << t.first << ' ';
 
         }
+
+        std::cout << std::endl;
 
         break;
 
@@ -382,11 +384,15 @@ bool LLGrammar::build_analyzer() {
 
     for (auto n : LLGrammar::LLanalyzer) {
 
+        std::cout << n.first;
+
         for (auto t : n.second) {
 
-            std::cout << n.first << ' ' << t.second << '\n';
+            std::cout << ' ' << t.second;
 
         }
+
+        std::cout << '\n';
 
     }
 

@@ -5,15 +5,14 @@
 
 RegularGrammar::RegularGrammar() {
 
-    RegularGrammar::N = {'S', 'Q', 'V'};
+    RegularGrammar::N = {'S', 'Q'};
 
     RegularGrammar::T = {'~', '*', '|', '(', ')'};
 
     RegularGrammar::S = 'S';
 
-    RegularGrammar::P = {{'S', std::vector <std::string> {"~Q", "(~V)V", "e"}},
-                         {'Q', std::vector <std::string> {"V", "|S"}},
-                         {'V', std::vector <std::string> {"*S", "S", "|S"}}};
+    RegularGrammar::P = {{'S', std::vector <std::string> {"~Q", "(~Q)Q", "e"}},
+                         {'Q', std::vector <std::string> {"*S", "S", "|S"}}};
 
 
 }
