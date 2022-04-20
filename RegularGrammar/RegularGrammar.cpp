@@ -4,21 +4,20 @@
 
 
 RegularGrammar::RegularGrammar() {
+    LLGrammar::P = {{'S', std::vector <std::string> {"~Q", "(~Q)Q", "e"}},
+                    {'Q', std::vector <std::string> {"*S", "S", "|S"}}};
 
-    RegularGrammar::N = {'S', 'Q'};
+    LLGrammar::N = {'S', 'Q'};
 
-    RegularGrammar::T = {'~', '*', '|', '(', ')'};
+    LLGrammar::T = {'e', '~', '*', '|', '(', ')'};
 
-    RegularGrammar::S = 'S';
-
-    RegularGrammar::P = {{'S', std::vector <std::string> {"~Q", "(~Q)Q", "e"}},
-                         {'Q', std::vector <std::string> {"*S", "S", "|S"}}};
-
-
+    LLGrammar::S = 'S';
 }
 
 
 std::pair<char, std::string> RegularGrammar::get_rule(int a, int b) {
-    return std::make_pair(RegularGrammar::N[a - 1], RegularGrammar::P[RegularGrammar::N[a - 1]][b - 1]);
+    return std::make_pair(RegularGrammar::N[a - 1], RegularGrammar::P.at(RegularGrammar::N[a - 1])[b - 1]);
 }
+
+
 

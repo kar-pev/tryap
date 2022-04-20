@@ -2,15 +2,15 @@
 #include <iostream>
 #include "LLGrammar.h"
 
-LLGrammar::LLGrammar() = default;
 
 void LLGrammar::build_first() {
-    std::cout << "start" << std::endl;
-    for (char n: LLGrammar::N) {
+    for (char n: this->N) {
         LLGrammar::first[n] = std::unordered_set<char>();
-        if (std::find(LLGrammar::P[n].begin(), LLGrammar::P[n].end(), "e") != LLGrammar::P[n].end()) {
+        if (std::find(LLGrammar::P.at(n).begin(), LLGrammar::P.at(n).end(), "e") != LLGrammar::P.at(n).end()) {
             LLGrammar::first[n].insert('e');
         }
+        std::cout << "start" << std::endl;
+
     }
 
     for (char t: LLGrammar::T) {
@@ -362,7 +362,7 @@ bool LLGrammar::build_analyzer() {
 
                 }
 
-                
+
 
             }
 
@@ -420,11 +420,17 @@ bool LLGrammar::build_analyzer() {
 
     }
 
+    LLGrammar::analyzer_exists = true;
+
     return true;
 
 }
 
-bool LLGrammar::build_tree( std::string input ) {
+std::vector < std::pair <char, int> > LLGrammar::derivation(std::string input) {
+
+    if (!LLGrammar::analyzer_exists){
+        LLGrammar::build_analyzer();
+    }
 
     input += '$';
 
@@ -432,7 +438,7 @@ bool LLGrammar::build_tree( std::string input ) {
 
     cur_stack.push('$'); cur_stack.push(LLGrammar::S);
 
-    std::vector <int> result;
+    std::vector < std::pair <char, int> > result;
 
     char first_elem;
 
@@ -442,19 +448,24 @@ bool LLGrammar::build_tree( std::string input ) {
 
         first_elem = cur_stack.top();
 
-        std::cout << *ptr << '\n';
+        /*std::cout << *ptr << '\n';
 
         std::cout << first_elem << '\n';
 
         for (auto item : result) {
-            std::cout << item << ' ';
+            std::cout << item.first << item.second << ' ';
         }
 
-        std::cout << std::endl;
+        std::cout << std::endl;*/
 
         if (first_elem == '$' && *ptr != '$') {
             std::cout << first_elem << ' ' << *ptr << "this is not regular expression" << '\n';
-            return false;
+            return std::vector < std::pair <char, int> > (0);
+        }
+
+        if (*ptr == 'e') {
+            ptr++;
+            continue;
         }
 
         std::pair <int, int> needed_rule;
@@ -466,14 +477,14 @@ bool LLGrammar::build_tree( std::string input ) {
 
             if (needed_rule.first == 0) {
                 std::cout << "this is not regular expression, no rule" << '\n';
-                return false;
+                return std::vector < std::pair <char, int> > (0);
             }
 
-            result.push_back(needed_rule.first);
+            result.push_back(std::make_pair(first_elem, needed_rule.second));
 
             cur_stack.pop();
 
-            for ( auto it = LLGrammar::P[first_elem][needed_rule.second].end() - 1; it != LLGrammar::P[first_elem][needed_rule.second].begin() - 1; it--) {
+            for ( auto it = LLGrammar::P.at(first_elem)[needed_rule.second].end() - 1; it != LLGrammar::P.at(first_elem)[needed_rule.second].begin() - 1; it--) {
                 cur_stack.push(*it);
             }
 
@@ -494,7 +505,7 @@ bool LLGrammar::build_tree( std::string input ) {
 
         } catch(std::out_of_range){
             std::cout << "this is not regular expression, fail" << '\n';
-            return false;
+            return(std::vector < std::pair <char, int> > (0));
         }
 
     }
@@ -502,10 +513,12 @@ bool LLGrammar::build_tree( std::string input ) {
     std::cout << '\n' << "deduction : ";
 
     for (auto item : result) {
-        std::cout << item << ' ';
+        std::cout << item.first << item.second << ' ';
     }
 
-    return true;
+    std::cout << '\n';
+
+    return result;
 
 }
 

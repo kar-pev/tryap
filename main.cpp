@@ -7,39 +7,17 @@
 
 int main() {
 
-/*    LLGrammar llGrammar;
-
-    llGrammar.add_N('A');
-
-    llGrammar.add_N('B');
-
-    llGrammar.add_N('C');
-
-    llGrammar.set_S('A');
-
-    llGrammar.add_T('a');
-
-    llGrammar.add_T('b');
-
-    llGrammar.add_Rule('A', "aBb");
-
-    llGrammar.add_Rule('A', "e");
-
-    llGrammar.add_Rule('A', "CB");
-
-    llGrammar.add_Rule('C', "e");
-
-    llGrammar.add_Rule('B', "A");*/
-
     RegularGrammar regularGrammar;
 
-    bool check;
+    RegularExpression expression;
 
-    check = regularGrammar.build_analyzer();
+    /*std::cin >> expression;*/
 
-    if (!check) std::cout << "error";
+    //e|~ is not re, need to be fixed
+    expression.set_expression("(~)*(~|~~*)");
 
-    regularGrammar.build_tree("~|(~~)*");
+    regularGrammar.build_tree( expression.get_expression() );
 
     return 0;
+
 }

@@ -5,16 +5,22 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "../LLGrammar/LLGrammar.h"
+#include "../AttributeGrammar/AttributeGrammar.h"
+#include "../Authomat/Authomat.h"
 
 
 
-class RegularGrammar : public LLGrammar{
+class RegularGrammar : public AttributeGrammar {
     public:
 
         RegularGrammar();
 
         std::pair <char, std::string> get_rule(int a, int b);
+
+
+    private:
+
+
 
 };
 

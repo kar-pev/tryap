@@ -13,6 +13,8 @@ class RegularExpression {
 
         std::string get_expression();
 
+        void followpos();
+
     private:
         // Expression
         std::string value;

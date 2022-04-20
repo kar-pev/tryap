@@ -12,15 +12,13 @@ class LLGrammar : public ContextFreeGrammar{
 
     public:
 
-        LLGrammar();
-
         void build_first();
 
         void build_follow();
 
         bool build_analyzer();
 
-        bool build_tree( std::string input );
+        std::vector < std::pair <char, int> > derivation( std::string input );
 
         bool rule_category(std::string rule);
 
@@ -39,6 +37,8 @@ class LLGrammar : public ContextFreeGrammar{
         bool first_exists = false;
 
         bool follow_exists = false;
+
+        bool analyzer_exists = false;
 
 };
 

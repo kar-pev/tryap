@@ -10,8 +10,8 @@ public:
     virtual bool add_Rule(char n, std::string rule);
 
 protected:
-        //Rules
-        std::unordered_map <char, std::vector <std::string> > P;
+    //Rules
+    std::unordered_map <char, std::vector <std::string> > P;
 };
 
 
