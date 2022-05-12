@@ -4,8 +4,9 @@
 
 #include <unordered_set>
 #include <set>
+#include <queue>
 
-void set_attrs(char action, std::unordered_set <int> first_pos, std::unordered_set <int> last_pos, bool empty, vert * vertex) {
+void set_attrs(char action, std::set <int> first_pos, std::set <int> last_pos, bool empty, vert * vertex) {
     vertex->attr.action = action;
     vertex->attr.first_pos = first_pos;
     vertex->attr.last_pos = last_pos;
@@ -13,10 +14,17 @@ void set_attrs(char action, std::unordered_set <int> first_pos, std::unordered_s
 }
 
 
+struct connection connection(char sign, int from, int to) {
+    struct connection connect{};
+    connect.sign = sign;
+    connect.from = from;
+    connect.to = to;
+    return connect;
+}
+
+
 //build of deduction tree
 void AttributeGrammar::dfs(std::vector < std::pair <char, int> > &der, int &rule_number, vert * child, int & pos) {
-
-    std::cout << der[rule_number].first << ' ' << der[rule_number].second << ' ' << child->val << '\n';
 
     if (AttributeGrammar::check_elem(AttributeGrammar::T, child->val)) {
         if (child->val == 'e' && child->parent->attr.action == '.') {
@@ -38,7 +46,12 @@ void AttributeGrammar::dfs(std::vector < std::pair <char, int> > &der, int &rule
         } else {
             child->attr.first_pos.insert(pos);
             child->attr.last_pos.insert(pos);
-            child->attr.empty = false;
+            if (child->val == 'e') {
+                child->attr.empty = true;
+            } else {
+                child->attr.empty = false;
+            }
+            AttributeGrammar::Sigma.insert(child->val);
             AttributeGrammar::followpos.emplace_back(child->val, std::unordered_set <int> ());
             pos++;
         }
@@ -171,11 +184,16 @@ void AttributeGrammar::build_tree( std::string expression ) {
 
     AttributeGrammar::build_followpos(AttributeGrammar::tree);
 
-    build_followpos(AttributeGrammar::tree);
+    if (AttributeGrammar::tree->attr.empty) {
+        AttributeGrammar::tree->attr.first_pos.insert(-1);
+    }
 
-    for (auto i : AttributeGrammar::tree->left->attr.last_pos) {
+    for (auto i : AttributeGrammar::tree->attr.last_pos) {
             followpos[i].second.insert(-1);
     }
+
+
+
 
     AttributeGrammar::followpos.emplace_back('#', std::unordered_set<int> ());
 
@@ -188,6 +206,9 @@ void AttributeGrammar::build_tree( std::string expression ) {
         }
         std::cout << '\n';
     }
+
+
+    AttributeGrammar::build_authomat(expression);
 
 }
 
@@ -240,7 +261,7 @@ void AttributeGrammar::build_followpos( vert * child ) {
         child->attr.first_pos.insert(child->right->attr.first_pos.begin(), child->right->attr.first_pos.end());
         child->attr.last_pos.insert(child->left->attr.last_pos.begin(), child->left->attr.last_pos.end());
         child->attr.last_pos.insert(child->right->attr.last_pos.begin(), child->right->attr.last_pos.end());
-        child->attr.empty = child->left->attr.empty && child->right->attr.empty;
+        child->attr.empty = child->left->attr.empty || child->right->attr.empty;
     }
     if (child->attr.action == '*') {
         child->attr.first_pos.insert(child->left->attr.first_pos.begin(), child->left->attr.first_pos.end());
@@ -259,25 +280,91 @@ Authomat AttributeGrammar::build_authomat(std::string expression) {
 
     Authomat result_authomat;
 
-    result_authomat.q = 0;
+    result_authomat.set_q(0);
 
-    AttributeGrammar::build_tree( expression );
-    if (AttributeGrammar::tree->attr.empty) {
-        AttributeGrammar::tree->attr.first_pos.insert(-1);
+    result_authomat.set_Sigma(AttributeGrammar::Sigma);
+
+    //map of all conditions, that was already found
+    std::map < std::set <int>, int > conditions;
+
+    std::queue < std::pair < std::set <int>, struct connection > > to_do;
+
+    //condition for start ones
+    to_do.emplace(AttributeGrammar::tree->attr.first_pos, connection('e', -1, -1));
+
+    std::cout << "done" << '\n';
+
+    //map for conditions, that was found by algo for current_condition
+    std::unordered_map <char, std::set <int> > new_conditions;
+
+    int found, condition_number = 0;
+
+    auto current_condition = to_do.front();
+
+    //adding new conditions in conditions
+    while (!to_do.empty()) {
+        current_condition = to_do.front();
+        to_do.pop();
+
+        for (auto it : current_condition.first) {
+            std::cout << it << ' ';
+        }
+        std::cout << '\n';
+
+        try {
+            //condition already exists
+            found = conditions.at(current_condition.first);
+            result_authomat.add_Delta(current_condition.second.sign, current_condition.second.from, found);
+            continue;
+        } catch (std::out_of_range) {
+            //new condition
+            conditions[current_condition.first] = condition_number;
+            current_condition.second.to = condition_number;
+            result_authomat.add_Q(condition_number);
+            condition_number++;
+            if (current_condition.second.from != -1) {
+                result_authomat.add_Delta(current_condition.second.sign, current_condition.second.from, current_condition.second.to);
+            }
+            if (current_condition.first.find(-1) != current_condition.first.end()) {
+                result_authomat.add_F(current_condition.second.to);
+            }
+        }
+
+        //adding all possible conditions in new_conditions
+        for (auto it : current_condition.first) {
+            //trying to find if conditions with same transitional symbol exist
+            if (it != -1) {
+                if (new_conditions.find(AttributeGrammar::followpos[it].first) == new_conditions.end()) {
+                    new_conditions[AttributeGrammar::followpos[it].first] = {};
+                }
+
+                for (auto symb: AttributeGrammar::followpos[it].second) {
+                    new_conditions[AttributeGrammar::followpos[it].first].insert(symb);
+                }
+            }
+        }
+
+        for (auto it : new_conditions) {
+            if (it.first != 'e') {
+                to_do.push(std::make_pair(it.second, connection(it.first, current_condition.second.to, -1)));
+            }
+        }
+
+        new_conditions.clear();
+
     }
 
-    std::vector < std::unordered_set <int> > conditions;
-
-    conditions.push_back(AttributeGrammar::tree->attr.first_pos);
-
-    while (true) {
-
-
-
+    for (auto it : conditions) {
+        std::cout << it.second << " : ";
+        for (auto k : it.first) {
+            std::cout << k << ' ';
+        }
+        std::cout << '\n';
     }
 
+    result_authomat.print_authomat("");
 
-        return Authomat();
+    return result_authomat;
 }
 
 

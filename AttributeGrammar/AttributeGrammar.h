@@ -3,13 +3,16 @@
 
 #include <map>
 #include <string>
+#include <set>
 #include "../LLGrammar/LLGrammar.h"
 #include "Tree.h"
 #include "../Authomat/Authomat.h"
 
-struct attrs { char action = '\0'; std::unordered_set <int> first_pos; std::unordered_set <int> last_pos; bool empty;};
+struct attrs { char action = '\0'; std::set <int> first_pos; std::set <int> last_pos; bool empty;};
 
 struct vert { attrs attr; char val = '\0'; vert * left = nullptr; vert * right = nullptr; vert * parent = nullptr;};
+
+struct connection { char sign; int from; int to;};
 
 class AttributeGrammar : public LLGrammar{
     public:
@@ -27,6 +30,8 @@ class AttributeGrammar : public LLGrammar{
         vert * tree = nullptr;
 
         std::vector <std::pair <char, std::unordered_set <int> > > followpos;
+
+        std::unordered_set <char> Sigma;
 
 };
 

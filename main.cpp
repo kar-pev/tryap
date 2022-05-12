@@ -11,10 +11,13 @@ int main() {
 
     RegularExpression expression;
 
-    /*std::cin >> expression;*/
+    std::cin >> expression;
 
-    //e|~ is not re, need to be fixed
-    expression.set_expression("(~)*(~|~~*)");
+    //fix e* and e on first place(no finish conditions)
+    //multiple * problem
+
+    //try answer about ~~*, probably followpos ||| fixed
+    //fix authomats with e
 
     regularGrammar.build_tree( expression.get_expression() );
 
